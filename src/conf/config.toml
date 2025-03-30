@@ -1,3 +1,6 @@
 [MAIN]
-tg_token = "token was here"
-bg_delay = 0.5
+bot_token = "gemini:token"
+app_id = 123456
+app_hash = "app_hash"
+bot_tag = "@username"
+admin_username = "username"
