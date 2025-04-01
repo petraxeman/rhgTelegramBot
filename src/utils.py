@@ -31,11 +31,12 @@ def parse_ask_msg(text: str, tg_bot_name: str, hr_bot_name):
     
     flags = ""
     direction = ""
+    clear_msg = text
     if match:
         flags = match.group("flags")
         direction = match.group("direction")
+        clear_msg = text.replace(match.group("full_command"), hr_bot_name)
     
-    clear_msg = text.replace(match.group("full_command"), hr_bot_name)
     flags = set(flags) if flags else set()
     direction = parse_direction(direction) if direction else {}
     return flags, direction, clear_msg

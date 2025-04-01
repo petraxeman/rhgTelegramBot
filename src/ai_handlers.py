@@ -50,7 +50,7 @@ async def gemini_ask(client: Client, message: Message):
     with g.db.transaction() as conn:
         chat = conn.root.users[user_id]["chat"]
         user_params = conn.root.users[user_id]["gemini_config"]
-    print(user_params)
+    
     f_flag = "f" in flags; forgot_param = user_params.get("forgot", False)
     if (f_flag or forgot_param) and not (f_flag and forgot_param):
         with g.db.transaction() as conn:
