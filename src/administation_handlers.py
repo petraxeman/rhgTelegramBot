@@ -1,4 +1,4 @@
-import logging, json
+import logging
 import globals as g
 from pyrogram import Client
 from pyrogram.types import Message
