@@ -1,7 +1,4 @@
 import os
-import db
-import toml
-import json
 import asyncio
 import logging
 import pyrogram
@@ -9,7 +6,7 @@ import globals as g
 
 from BTrees.IOBTree import IOBTree
 from pyrogram import Client, filters
-from pyrogram.types import Message, BotCommand
+from pyrogram.types import BotCommand
 from pyrogram.handlers import MessageHandler
 
 # ROUTES
