@@ -1,0 +1,9 @@
+[CREDIT]
+tg_bot_name = "@bot"
+hr_bot_name = "Bot"
+admin_username = "your username"
+
+[TELEGRAM]
+app_id = 0
+app_hash = "hash"
+bot_token = "token"

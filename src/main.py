@@ -1,36 +1,26 @@
 import os
 import db
 import toml
+import json
 import asyncio
 import logging
 import pyrogram
 import globals as g
 
+from BTrees.IOBTree import IOBTree
 from pyrogram import Client, filters
 from pyrogram.types import Message, BotCommand
 from pyrogram.handlers import MessageHandler
 
 # ROUTES
 from info_handlers import start_command, help_command
-from ai_handlers import set_gemini_token_command, gemini_ask
-from administation_handlers import add_user_command
+from ai_handlers import set_gemini_token_command, set_gmn_arg_command, gemini_ask
+from administation_handlers import add_user_command, get_user_list_command
 
 USER_SESSION_NAME_TEMPLATE = "user_{}"
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger("rhgTelegramGroup")
-
-
-
-async def pre_message(client: Client, message: Message):
-    if str(message.from_user.id) not in g.cache:
-        data = await g.adb.fetchone(f"SELECT userid, gemini_token FROM users WHERE userid == '{message.from_user.id}'")
-        if not data:
-            logger.info(f"Пользователь {message.from_user.username} ({message.from_user.id}) пытался получить доступ, но он не зарегистрирован.")
-            message.stop_propagation()
-            return
-        else:
-            g.cache[data[0]] = {"gemini_token": data[1], "context": []}
 
 
 
@@ -47,14 +37,17 @@ async def main():
     ])
     logger.info("Команды для автозаполнения отправлены.")
     
-    bot.add_handler(MessageHandler(add_user_command, filters.command("add_user") & filters.private), group=0)
+    bot.add_handler(MessageHandler(add_user_command, filters.command("add_user") & filters.private), group=-150)
+    bot.add_handler(MessageHandler(get_user_list_command, filters.command("get_user_list") & filters.private), group=-150)
     
-    bot.add_handler(MessageHandler(pre_message), 1)
+    #bot.add_handler(MessageHandler(pre_message), -100)
     
     bot.add_handler(MessageHandler(start_command, filters.command("start") & filters.private), 2)
     bot.add_handler(MessageHandler(help_command, filters.command("help") & filters.private), 2)
     
     bot.add_handler(MessageHandler(set_gemini_token_command, filters.command("set_token") & filters.private), 2)
+    bot.add_handler(MessageHandler(set_gmn_arg_command, filters.command("set_gmn_arg") & filters.private), 2)
+    
     bot.add_handler(MessageHandler(gemini_ask, filters.mentioned), 3)
     
     logger.info("Обработчики созданы.")
@@ -72,9 +65,15 @@ async def main():
 if __name__ == "__main__":
     os.system("cls")
     
-    bot_token = g.cfg.get("MAIN", {}).get("bot_token")
-    app_id = g.cfg.get("MAIN", {}).get("app_id")
-    app_hash = g.cfg.get("MAIN", {}).get("app_hash")
+    with g.db.transaction() as conn:
+        if not hasattr(conn.root, "users"):
+            conn.root.users = IOBTree()
+        if not hasattr(conn.root, "groups"):
+            conn.root.groups = IOBTree()
+    
+    bot_token = g.cfg.get("TELEGRAM", {}).get("bot_token")
+    app_id = g.cfg.get("TELEGRAM", {}).get("app_id")
+    app_hash = g.cfg.get("TELEGRAM", {}).get("app_hash")
     
     if not bot_token or not app_id or not app_hash:
         raise ValueError("Expected bot_token, app_id, and app_hash in config.toml")

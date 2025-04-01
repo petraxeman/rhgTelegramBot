@@ -1,7 +1,0 @@
-toml==0.10
-dotenv==0.9.9
-schedule==1.2.2
-aiosqlite==0.21
-pyrogram==2.0
-google-genai==1.2
-tgcrypto

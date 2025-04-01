@@ -7,6 +7,6 @@ services:
       dockerfile: src/Dockerfile
     network_mode: "host"
     volumes:
-      - ./app_conf:/app/conf
+      - ./app_assets:/app/assets
       - ./app_sessions:/app/sessions
     restart: always

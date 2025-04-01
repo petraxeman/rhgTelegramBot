@@ -1,7 +1,6 @@
-import db, os, toml
+import db, os, toml, ZODB
 
-with open(os.path.join(".", "conf", "config.toml"), "r", encoding="utf8") as file:
+with open(os.path.join(".", "assets", "config.toml"), "r", encoding="utf8") as file:
     cfg = toml.loads(file.read())
 
-cache = {}
-adb = db.DB()
+db = ZODB.DB("./assets/db.db")
